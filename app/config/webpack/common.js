@@ -2,6 +2,9 @@ const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const webpackEnv = process.env.NODE_ENV || 'development'
+const isEnvProduction = webpackEnv === 'production'
+
 let config = {
   entry: {
     main: path.resolve(__dirname, 'entry.js')
@@ -14,7 +17,8 @@ let config = {
   resolve: {
     alias: {
       amber: path.resolve(__dirname, '../../lib/amber/assets/js/amber.js')
-    }
+    },
+    modules: ['src/assets/javascripts', 'src', 'node_modules']
   },
   module: {
     rules: [
@@ -42,12 +46,33 @@ let config = {
         ]
       },
       {
-        test: /\.js$/,
+        test: /\.(js|mjs|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', "@babel/preset-react"]
+            customize: require.resolve(
+              'babel-preset-react-app/webpack-overrides'
+            ),
+
+            plugins: [
+              [
+                require.resolve('babel-plugin-named-asset-import'),
+                {
+                  loaderMap: {
+                    svg: {
+                      ReactComponent: '@svgr/webpack?-svgo![path]',
+                    },
+                  },
+                },
+              ],
+            ],
+            // This is a feature of `babel-loader` for webpack (not Babel itself).
+            // It enables caching results in ./node_modules/.cache/babel-loader/
+            // directory for faster rebuilds.
+            cacheDirectory: true,
+            cacheCompression: isEnvProduction,
+            compact: isEnvProduction,
           }
         }
       }
