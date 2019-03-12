@@ -10,11 +10,8 @@ import {
 import classNames from 'classnames'
 import {withStyles} from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import List from '@material-ui/core/List'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -31,6 +28,7 @@ import HomeIcon from '@material-ui/icons/Home'
 import ViewModuleIcon from '@material-ui/icons/ViewModule'
 import PersonIcon from '@material-ui/icons/Person'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
+import { FaceProfile, Login, Logout, InformationVariant } from 'mdi-material-ui'
 
 import Header from 'components/Header/Header.jsx'
 import HeaderLinks from 'components/Header/HeaderLinks.jsx'
@@ -48,7 +46,10 @@ const icons = {
   'Inbox': InboxIcon,
   'Mail': MailIcon,
   'Person': PersonIcon,
-  'View': ViewModuleIcon
+  'View': ViewModuleIcon,
+  'Face': FaceProfile,
+  'Login': Login,
+  'Info': InformationVariant
 }
 
 const drawerWidth = 240
@@ -309,13 +310,13 @@ class App extends React.Component {
               <li>
                 <a href='/signout' onClick={this.signOut.bind(this)}>
                   <ListItem button >
-                    <ListItemIcon>{<ExitToApp />}</ListItemIcon>
+                    <ListItemIcon>{<Logout />}</ListItemIcon>
                     <ListItemText primary="Sign Out" />
                   </ListItem>
                 </a>
               </li>
             ) : (
-              <ListItemLink exact key='/login-page' to='/login-page' primary='Sign In' icon={<ExitToApp />} />
+              <ListItemLink exact key='/login-page' to='/login-page' primary='Sign In' icon={<Login />} />
             )
             }
             { this.isAuthenticated() ? (

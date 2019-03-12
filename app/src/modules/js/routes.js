@@ -23,27 +23,27 @@ routes.push({
   path: '/landing-page',
   exact: true,
   type: 'index',
-  name: 'Landing Page',
+  name: 'Landing Example',
   main: LandingPage,
-  icon: 'View'
+  icon: 'Info'
 })
 
 routes.push({
   path: '/profile-page',
   exact: true,
   type: 'index',
-  name: 'Profile Page',
+  name: 'Profile Example',
   main: ProfilePage,
-  icon: 'View'
+  icon: 'Face'
 })
 
 routes.push({
   path: '/login-page',
   exact: true,
   type: 'index',
-  name: 'Login Page',
+  name: 'Login Example',
   main: LoginPage,
-  icon: 'View'
+  icon: 'Login'
 })
 
 // append routes
