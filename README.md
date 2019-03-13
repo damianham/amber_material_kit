@@ -178,22 +178,14 @@ $ npm run test
 
 See the [Heroku deployment](https://docs.amberframework.org/amber/deployment/heroku) documentation.
 Most importantly you need to use PostgreSQL or MySQL as the database.  If you were to use SQLite on Heroku, 
-you would lose your entire database at least once every 24 hours.  
-See the [PostgreSQL Installation Guides](https://wiki.postgresql.org/wiki/Detailed_installation_guides) or see below for some quick commands to get started.
+you would lose your entire database at least once every 24 hours.  In this case you will need a local
+PostgreSQL or MySQL database in order to develop and test your application.
 
-```
-$ cd mynewapp
-$ heroku create mynewapp --buildpack https://github.com/amberframework/heroku-buildpack-amber.git
-$ git init
-$ heroku git:remote -a mynewapp
-$ git add -A
-$ git commit -m "My first Amber app"
-$ git push heroku master
-```
+#### Installing a local PostgreSQL instance
 
-#### Installing local PostgreSQL instance
+See the [PostgreSQL Installation Guides](https://wiki.postgresql.org/wiki/Detailed_installation_guides) or use
+these quick commands to get started with a local PostgreSQL instance.  These instructions are for Unbuntu 18.04 and we assume an application name of **mynewapp**
 
-These instructions are for Unbuntu 18.04.
 ```
 $ sudo apt-get update
 $ sudo apt-get install postgresql-all postgresql-contrib
@@ -213,15 +205,27 @@ replacing PASSWORD with the password entered when creating the materialkit postg
 
 #### Connecting to the Heroku PostgreSQL service
 
-Heroku exposes a **DATABASE_URL** environment variable to your Heroku application instance.  Modify
-config/database.cr so it looks like this
-```
-Granite::Adapters << Granite::Adapter::Pg.new({name: "pg", url: ENV["DATABASE_URL"]? || Amber.settings.database_url})
-Granite.settings.logger = Amber.settings.logger.dup
-Granite.settings.logger.not_nil!.progname = "Granite"
-```
+Heroku exposes a **DATABASE_URL** environment variable to your Heroku application instance. 
+This recipe already includes support to use the Heroku DATABASE_URL environment variable if
+configured.
 
+#### Configure for Production
 
+To be able to use production environment config Heroku needs .amber_secret_key or .encryption_key during compilation process, so in this case you should remove the encryption key from .gitignore file.  You may also
+need to set the AMBER_ENV config var to production
+
+#### Push the app to Heroku
+
+```
+$ cd mynewapp
+$ heroku create mynewapp --buildpack https://github.com/amberframework/heroku-buildpack-amber.git
+$ git init
+$ heroku git:remote -a mynewapp
+$ git add -A
+$ git commit -m "My first Amber app"
+$ heroku config:set AMBER_ENV=production
+$ git push heroku master
+```
 
 ## TODO
 

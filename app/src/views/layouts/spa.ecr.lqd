@@ -27,6 +27,8 @@
 
     <script src="/dist/main.bundle.js"></script>
 
+    <%- # if deploying to heroku ensure reload is not enabled -%>
+    <%- # if Amber.settings.auto_reload? && Amber.env == "development" -%>
     <%- if Amber.settings.auto_reload? -%><script src="/js/client_reload.js"></script><%- end -%>
 
     <script>

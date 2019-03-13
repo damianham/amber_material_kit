@@ -181,7 +181,7 @@ class App extends React.Component {
       .catch((data) => {
         console.log('error authenticating user with token', token, data)
         Auth.deauthenticateUser()
-        window.location = '/signin'
+        //window.location = '/signin'
       })
   }
 
@@ -203,7 +203,7 @@ class App extends React.Component {
       .catch((data) => {
         console.log('error getting user', data)
         Auth.deauthenticateUser()
-        window.location = '/signin'
+        //window.location = '/signin'
       })
   }
 
@@ -222,9 +222,22 @@ class App extends React.Component {
   }
 
   signOut (event) {
+   const $ = window.$
+    const vm = this
+    
     event.preventDefault()
     Auth.deauthenticateUser()
-    window.location = '/signout'
+    vm.setState({ current_user: undefined })
+
+    $.ajax({ url: '/signout',
+      method: 'GET',
+      dataType: 'json' }
+    ).then(() => {
+      window.location = '/#/'
+    }
+    ).catch(() => {
+      window.location = '/#/'
+    })
   }
 
   render () {

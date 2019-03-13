@@ -19,6 +19,9 @@ html
 
     script src="/dist/main.bundle.js"
 
+    / if deploying to Heroku ensure client reload is not enabled 
+    / e.g. only enable for development environment
+    / if Amber.settings.auto_reload? && Amber.env == "development"
     - if Amber.settings.auto_reload?
       script src="/js/client_reload.js"
 

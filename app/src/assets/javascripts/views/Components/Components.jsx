@@ -46,6 +46,14 @@ class Components extends React.Component {
                   <p style={ { marginTop: 10 }}>Thank you for trying out the Amber Framework.
                   We are working hard to provide a super fast and reliable framework that provides
                   all the productivity tools you are used to without sacrificing the speed.</p>
+
+                  <p style={ { marginTop: 10 }}>This application was generated with the 
+                    <a href='https://github.com/damianham/amber_material_kit'>Amber Material Kit recipe</a> .
+                    Amber recipes create a lot of the boilerplate code to jump start your Amber application.
+                    Checkout the recipe on <a href='https://github.com/damianham/amber_material_kit'>Github</a> repository
+                    for details about the features included and how you can get started with this recipe.  See the
+                    links below to get started with Crystal and Amber.
+                  </p>
                 </div>
                
                 <div className="list-group">

@@ -55,7 +55,8 @@ class LoginPage extends React.Component {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[this.state.cardAnimaton]}>
-                  <form className={classes.form}>
+                  <form className={classes.form} action="/session" method="post">
+                    <input type="hidden" name="_csrf" value={window.csrf_token} />
                     <CardHeader color="primary" className={classes.cardHeader}>
                       <h4>Login</h4>
                       <div className={classes.socialLine}>
@@ -113,6 +114,7 @@ class LoginPage extends React.Component {
                         }}
                         inputProps={{
                           type: "email",
+                          name: "email",
                           endAdornment: (
                             <InputAdornment position="end">
                               <Email className={classes.inputIconsColor} />
@@ -128,6 +130,7 @@ class LoginPage extends React.Component {
                         }}
                         inputProps={{
                           type: "password",
+                          name: "password",
                           endAdornment: (
                             <InputAdornment position="end">
                               <Icon className={classes.inputIconsColor}>
