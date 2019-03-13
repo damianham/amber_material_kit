@@ -172,6 +172,57 @@ Test the SPA javascript code with
 $ npm run test
 ```
 
+## Deployment
+
+### Deploy to Heroku
+
+See the [Heroku deployment](https://docs.amberframework.org/amber/deployment/heroku) documentation.
+Most importantly you need to use PostgreSQL or MySQL as the database.  If you were to use SQLite on Heroku, 
+you would lose your entire database at least once every 24 hours.  
+See the [PostgreSQL Installation Guides](https://wiki.postgresql.org/wiki/Detailed_installation_guides) or see below for some quick commands to get started.
+
+```
+$ cd mynewapp
+$ heroku create mynewapp --buildpack https://github.com/amberframework/heroku-buildpack-amber.git
+$ git init
+$ heroku git:remote -a mynewapp
+$ git add -A
+$ git commit -m "My first Amber app"
+$ git push heroku master
+```
+
+#### Installing local PostgreSQL instance
+
+These instructions are for Unbuntu 18.04.
+```
+$ sudo apt-get update
+$ sudo apt-get install postgresql-all postgresql-contrib
+$ sudo -u postgres createuser -d -P materialkit  # create a new database user called materialkit
+$ sudo -u postgres createdb -O materialkit mynewapp_development  # create a development db owned by materialkit
+$ sudo -u postgres createdb -O materialkit mynewapp_test  # create a test db owned by materialkit
+```
+Configure the database URL in config/environments/development.yml to
+
+**postgres://materialkit:PASSWORD@localhost:5432/mynewapp_development**
+
+and in config/environments/test.yml to 
+
+**postgres://materialkit:PASSWORD@localhost:5432/mynewapp_test**
+
+replacing PASSWORD with the password entered when creating the materialkit postgres user.
+
+#### Connecting to the Heroku PostgreSQL service
+
+Heroku exposes a **DATABASE_URL** environment variable to your Heroku application instance.  Modify
+config/database.cr so it looks like this
+```
+Granite::Adapters << Granite::Adapter::Pg.new({name: "pg", url: ENV["DATABASE_URL"]? || Amber.settings.database_url})
+Granite.settings.logger = Amber.settings.logger.dup
+Granite.settings.logger.not_nil!.progname = "Granite"
+```
+
+
+
 ## TODO
 
 - signin/signout from the SPA
