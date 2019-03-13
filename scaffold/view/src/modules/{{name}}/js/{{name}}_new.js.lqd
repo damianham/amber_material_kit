@@ -1,7 +1,12 @@
 /* eslint-disable no-trailing-spaces */
 import React from 'react'
-import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+
+import { withTheme } from '@material-ui/core/styles'
+import withStyles from '@material-ui/core/styles/withStyles'
+import Footer from 'components/Footer/Footer.jsx'
+
+import moduleStyle from "assets/jss/moduleStyle.jsx"
 
 import {EventBus} from '../../../lib/js/eventBus'
 import {store} from '../../../lib/js/store'
@@ -9,7 +14,7 @@ import {store} from '../../../lib/js/store'
 import { {{class_name}} } from './{{name}}'
 import {{class_name}}Form from './{{name}}_form'
 
-export class {{class_name}}New extends React.Component {
+class {{class_name}}NewComponent extends React.Component {
   constructor (props) {
     super(props)
 
@@ -45,22 +50,32 @@ export class {{class_name}}New extends React.Component {
   }
 
   render() {
+    const { classes, ...rest } = this.props
     return (
-      <div>
-        <div className="btn btn-primary btn-xs {{name}}-new-back-button new-back-button"
-          onClick={this.onBack.bind(this)}
-        >
-          Back
+      <div style={ { width: '100%' } }>
+        <div className={classes.pageHeader} >
+          <div className={classes.container}>
+            <div className="btn btn-primary btn-xs {{name}}-new-back-button new-back-button"
+              onClick={this.onBack.bind(this)}
+            >
+              Back
+            </div>
+            <{{class_name}}Form {{name}}={this.state}
+              onSubmit={this.onSubmit.bind(this)}
+              onChange={this.onChange.bind(this)}/>
+          </div>
+          <Footer whiteFont/>
         </div>
-        <{{class_name}}Form {{name}}={this.state}
-          onSubmit={this.onSubmit.bind(this)}
-          onChange={this.onChange.bind(this)}/>
       </div>
     )
   }
 }
 
-{{class_name}}New.proptypes = {
+{{class_name}}NewComponent.proptypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }
+
+export const {{class_name}}New = withStyles(moduleStyle, { withTheme: true })({{class_name}}NewComponent)

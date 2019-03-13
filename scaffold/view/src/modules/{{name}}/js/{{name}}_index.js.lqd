@@ -2,7 +2,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import { withTheme } from '@material-ui/core/styles'
+import withStyles from '@material-ui/core/styles/withStyles'
+import Footer from 'components/Footer/Footer.jsx'
+
+import moduleStyle from "assets/jss/moduleStyle.jsx"
 
 import { EventBus } from '../../../lib/js/eventBus'
 import { bestTitleForClass } from '../../../lib/js/utils'
@@ -109,60 +114,45 @@ class {{class_name}}IndexComponent extends React.Component {
   }
 
   render () {
+    const { classes, ...rest } = this.props
     return (
-      <{{class_name}}IndexList {{name | pluralize}}={this.state.list} delegate={this}/>
+      <div style={ { width: '100%' } }>
+        <div className={classes.pageHeader} >
+          <div className={classes.container}>
+            <div className="row {{name}}-index-title-row index-title-row">
+              <div className="col-sm-11">
+                <h2 className="{{name}}-index-title index-title">{{display_name | pluralize}}</h2>
+              </div>
+              <div className="col-sm-1">
+                <div className="{{name}}-index-new-button index-new-button btn btn-secondary btn-xs">
+                  <Link style={classes.button} to="/{{name | pluralize}}/new">New</Link>
+                </div>
+              </div>
+            </div>
+            <div className={classNames(classes.main, classes.mainRaised)}>
+              <{{class_name}}IndexList {{name | pluralize}}={this.state.list} delegate={this}/>
+            </div>
+          </div>
+          <Footer whiteFont/>
+        </div>
+      </div>
     )
   }
 }
 
 {{class_name}}IndexComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired
 }
 
-export const {{class_name}}Index = withTheme()({{class_name}}IndexComponent)
+export const {{class_name}}Index = withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexComponent)
 
 class {{class_name}}IndexListComponent extends React.Component {
-  constructor (props) {
-    super(props)
-
-    const { theme } = props
-
-    this.styles = {
-      primaryText: {
-        backgroundColor: theme.palette.background.default,
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        color: theme.palette.text.primary
-      },
-      primaryColor: {
-        backgroundColor: theme.palette.primary.main,
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`
-        // color: theme.palette.common.white
-      },
-      button: {
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.text.secondary
-      },
-      links: {
-        color: theme.palette.secondary.main
-      }
-    }
-  }
-
   render () {
+    const { classes, ...rest } = this.props
     let clickHandler = this.props.delegate ? this.props.delegate.toggleSort : () => {}
     return (
-      <div>
-        <div className="row {{name}}-index-title-row index-title-row">
-          <div className="col-sm-11">
-            <h2 className="{{name}}-index-title index-title">{{display_name | pluralize}}</h2>
-          </div>
-          <div className="col-sm-1">
-            <div className="{{name}}-index-new-button index-new-button btn btn-secondary btn-xs">
-              <Link style={this.styles.button} to="/{{name | pluralize}}/new">New</Link>
-            </div>
-          </div>
-        </div>
-
+      <div className={classes.indexList}>
         <div className="table-responsive {{name}}-index-table index-table">
           <table className="table table-striped">
             <thead>
@@ -183,7 +173,7 @@ class {{class_name}}IndexListComponent extends React.Component {
               { this.props.{{name | pluralize}} &&
                 this.props.{{name | pluralize}}.map((instance,index) => {
                   return (
-                    <{{class_name}}IndexItem key={index} {{name}}={instance} delegate={this.props.delegate} styles={this.styles} />
+                    <{{class_name}}IndexItem key={index} {{name}}={instance} delegate={this.props.delegate} />
                   )
                 })
               }
@@ -196,6 +186,7 @@ class {{class_name}}IndexListComponent extends React.Component {
 }
 
 {{class_name}}IndexListComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   {{name | pluralize}}: PropTypes.array.isRequired,
   delegate: PropTypes.oneOfType([
@@ -205,15 +196,9 @@ class {{class_name}}IndexListComponent extends React.Component {
   ]).isRequired
 }
 
-export const {{class_name}}IndexList = withTheme()({{class_name}}IndexListComponent)
+export const {{class_name}}IndexList =  withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexListComponent)
 
 class {{class_name}}IndexItemComponent extends React.Component {
-  constructor (props) {
-    super(props)
-
-    this.styles = props.styles
-  }
-
   delete (id, event) {
     event.preventDefault()
     if (id) {
@@ -224,6 +209,7 @@ class {{class_name}}IndexItemComponent extends React.Component {
   }
 
   render () {
+    const { classes, ...rest } = this.props
     const {{name}} = this.props.{{name}}
 {% for field in visible_fields -%}
 {% if field.type == "reference" -%}
@@ -234,12 +220,12 @@ class {{class_name}}IndexItemComponent extends React.Component {
 {% endfor -%}
 {{" "}}
     return (
-      <tr className="{{name}}-index-table-row index-table-row">
+      <tr className='{{name}}-index-table-row index-table-row'>
         {% for field in visible_fields -%}
         {% if field.name != "user" -%}
         {% if field.type == "reference" -%}
         <td title="{{name}}-{{field.name}}" className="{{name}}-{{field.name}}-index-table-data {{name}}-index-table-data index-table-data">
-          <Link style={this.styles.link} role="{{name}}-{{field.name}}-link" to={
+          <Link className={classes.link} role='{{name}}-{{field.name}}-link' to={
             {
               pathname: '{{field.name | pluralize}}/show/' + {{name}}.{{field.name}}_id,
               state: {
@@ -251,34 +237,34 @@ class {{class_name}}IndexItemComponent extends React.Component {
           </Link>
         </td>
         {% else -%}
-          <td title="{{name}}-{{field.name}}" className="{{name}}-{{field.name}}-index-table-data {{name}}-index-table-data index-table-data">{ {{name}}.{{field.name}} }</td>
+          <td title='{{name}}-{{field.name}}' className='{{name}}-{{field.name}}-index-table-data {{name}}-index-table-data index-table-data'>{ {{name}}.{{field.name}} }</td>
         {% endif -%}
         {% endif -%}
         {% endfor %}
-        <td className="{{name}}-index-actions-column index-actions-column">
-          <div className="row">
-            <div className="col">
-              <Link className="{{name}}-index-actions-edit index-actions-edit"
-                role="{{name}}-edit"
+        <td className='{{name}}-index-actions-column index-actions-column'>
+          <div className='row'>
+            <div className='col'>
+              <Link className={classes.link + ' {{name}}-index-actions-edit index-actions-edit' }
+                role='{{name}}-edit'
                 to={
                   {
                     pathname: '/{{name | pluralize}}/edit/' + {{name}}.id,
                     state: {{name}}
                   }
                 }
-              ><i className="material-icons">edit</i></Link>
+              ><i className='material-icons'>edit</i></Link>
             </div>
-            <div className="col">
-              <span className="{{name}}-index-actions-delete index-actions-delete"
-                role="{{name}}-delete"
+            <div className='col'>
+              <span className={classes.linkDelete + ' {{name}}-index-actions-delete index-actions-delete' }
+                role='{{name}}-delete'
                 onClick={this.delete.bind(this, {{name}}.id)}
               >
-                <i className="material-icons">delete</i>
+                <i className='material-icons'>delete</i>
               </span>
             </div>
-            <div className="col">
-              <Link className="{{name}}-index-actions-show index-actions-show"
-                role="{{name}}-show"
+            <div className='col'>
+              <Link className={classes.link + ' {{name}}-index-actions-show index-actions-show' }
+                role='{{name}}-show'
                 to={
                   {
                     pathname: '/{{name | pluralize}}/show/' + {{name}}.id,
@@ -294,7 +280,7 @@ class {{class_name}}IndexItemComponent extends React.Component {
                     }
                   }
                 }
-              ><i className="material-icons">arrow_forward_ios</i></Link>
+              ><i className='material-icons'>arrow_forward_ios</i></Link>
             </div>
           </div>
         </td>
@@ -304,14 +290,14 @@ class {{class_name}}IndexItemComponent extends React.Component {
 }
 
 {{class_name}}IndexItemComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   {{name}}: PropTypes.object.isRequired,
   delegate: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.object,
     PropTypes.func
-  ]).isRequired,
-  styles: PropTypes.object.isRequired
+  ]).isRequired
 }
 
-export const {{class_name}}IndexItem = withTheme()({{class_name}}IndexItemComponent)
+export const {{class_name}}IndexItem =  withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexItemComponent)

@@ -3,13 +3,19 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
+import { withTheme } from '@material-ui/core/styles'
+import withStyles from '@material-ui/core/styles/withStyles'
+import Footer from 'components/Footer/Footer.jsx'
+
+import moduleStyle from "assets/jss/moduleStyle.jsx"
+
 import {EventBus} from '../../../lib/js/eventBus'
 import {bestTitleForClass} from '../../../lib/js/utils'
 import {store} from '../../../lib/js/store'
 
 import { {{class_name}} } from './{{name}}'
 
-export class {{class_name}}View extends React.Component {
+class {{class_name}}ViewComponent extends React.Component {
   constructor (props) {
     super(props)
 
@@ -81,6 +87,7 @@ export class {{class_name}}View extends React.Component {
   }
 
   render () {
+    const { classes, ...rest } = this.props
     const {{name}} = this.state.{{name}} || {}
     const related = this.state.related || []
 
@@ -93,83 +100,91 @@ export class {{class_name}}View extends React.Component {
     {% endfor %}
 
     return (
-      <div className="table-responsive {{name}}-view-table view-table">
-        <div className="btn btn-primary btn-xs"
-          onClick={this.onBack.bind(this)}
-        >
-          Back
-        </div>
-        <table className="table table-striped">
-          <tbody>
-            {% for field in visible_fields -%}
-            {% if field.name != "user" -%}
-            <tr>
-              <th className="{{name}}-view-table-head view-table-head">{{ field.name | capitalize }}</th>
-              {% if field.type == "reference" -%}
-              <td title="{{name}}-{{field.name}}" className="{{name}}-view-table-data view-table-data">
-                <Link to={
-                  {
-                    pathname: '/{{field.name | pluralize}}/show/' + {{name}}.{{field.name}}_id,
-                    state: {
-                      {{field.name}}: {{field.name}},
-                      {{name}}: {{name}}
-                    }
-                  }
-                }>{ bestTitleForClass({{field.name}} || { id: {{name}}.{{field.name}}_id })}</Link>
-              </td>
-              {% else -%}
-              <td title="{{name}}-{{field.name}}" className="{{name}}-view-table-data view-table-data">{ {{name}}.{{field.name}} }</td>
-              {%- endif %}
-            </tr>
-            {% endif -%}
-            {% endfor %}
-          </tbody>
-        </table>
-
-        { related.length > 0 &&
-          <div className="{{name}}-related-table related-table">
-            <h3>RELATED - change me</h3>
-            <table className="table table-striped">
-              <tbody>
-                {
-                  related.map((obj) => {
-                    /*
-                      we could link to the related object with
-                      <td className="{{name}}-related-table-data related-table-data view-table-data">
-                        <Link to={
-                          {
-                            // change plural_related to the plural related model name
-                            pathname: "/plural_related/show/"+ obj.id,
-                            state: {
-                              related: obj,  // change related to the related model name
-                              {{name}}: {{name}}
-                            }
+      <div style={ { width: '100%' } }>
+        <div className={classes.pageHeader} >
+          <div className={classes.container}>
+            <div className="table-responsive {{name}}-view-table view-table">
+              <div className="btn btn-primary btn-xs"
+                onClick={this.onBack.bind(this)}
+              >
+                Back
+              </div>
+              <table className="table table-striped">
+                <tbody>
+                  {% for field in visible_fields -%}
+                  {% if field.name != "user" -%}
+                  <tr>
+                    <th className="{{name}}-view-table-head view-table-head">{{ field.name | capitalize }}</th>
+                    {% if field.type == "reference" -%}
+                    <td title="{{name}}-{{field.name}}" className="{{name}}-view-table-data view-table-data">
+                      <Link to={
+                        {
+                          pathname: '/{{field.name | pluralize}}/show/' + {{name}}.{{field.name}}_id,
+                          state: {
+                            {{field.name}}: {{field.name}},
+                            {{name}}: {{name}}
                           }
-                        }>{ bestTitleForClass(obj) }</Link>
-                      </td>
-                    */
-                    return (
-                      <tr key={obj.id}>
-                        <td className="{{name}}-related-table-data related-table-data view-table-data">{ bestTitleForClass(obj) }</td>
+                        }
+                      }>{ bestTitleForClass({{field.name}} || { id: {{name}}.{{field.name}}_id })}</Link>
+                    </td>
+                    {% else -%}
+                    <td title="{{name}}-{{field.name}}" className="{{name}}-view-table-data view-table-data">{ {{name}}.{{field.name}} }</td>
+                    {%- endif %}
+                  </tr>
+                  {% endif -%}
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                      </tr>
-                    )
-                  })
-                }
-              </tbody>
-            </table>
+              { related.length > 0 &&
+                <div className="{{name}}-related-table related-table">
+                  <h3>RELATED - change me</h3>
+                  <table className="table table-striped">
+                    <tbody>
+                      {
+                        related.map((obj) => {
+                          /*
+                            we could link to the related object with
+                            <td className="{{name}}-related-table-data related-table-data view-table-data">
+                              <Link to={
+                                {
+                                  // change plural_related to the plural related model name
+                                  pathname: "/plural_related/show/"+ obj.id,
+                                  state: {
+                                    related: obj,  // change related to the related model name
+                                    {{name}}: {{name}}
+                                  }
+                                }
+                              }>{ bestTitleForClass(obj) }</Link>
+                            </td>
+                          */
+                          return (
+                            <tr key={obj.id}>
+                              <td className="{{name}}-related-table-data related-table-data view-table-data">{ bestTitleForClass(obj) }</td>
+
+                            </tr>
+                          )
+                        })
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </div>
           </div>
-
-        }
-
+          <Footer whiteFont/>
+        </div>
       </div>
-
     )
   }
 }
 
-{{class_name}}View.proptypes = {
+{{class_name}}ViewComponent.proptypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired
 }
+
+export const {{class_name}}View = withStyles(moduleStyle, { withTheme: true })({{class_name}}ViewComponent)

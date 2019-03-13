@@ -1,13 +1,19 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { withTheme } from '@material-ui/core/styles'
+import withStyles from '@material-ui/core/styles/withStyles'
+import Footer from 'components/Footer/Footer.jsx'
+
+import moduleStyle from "assets/jss/moduleStyle.jsx"
 
 import { EventBus } from '../../../lib/js/eventBus'
 import { store } from '../../../lib/js/store'
 
 import {{class_name}}Form from './{{name}}_form'
 
-export class {{class_name}}Edit extends React.Component {
+class {{class_name}}EditComponent extends React.Component {
   constructor (props) {
     super(props)
 
@@ -34,22 +40,32 @@ export class {{class_name}}Edit extends React.Component {
   }
 
   render () {
+    const { classes, ...rest } = this.props
     return (
-      <div>
-        <div className="btn btn-primary btn-xs {{name}}-edit-back-button edit-back-button"
-          onClick={this.onBack.bind(this)}
-        >
-          Back
+      <div style={ { width: '100%' } }>
+        <div className={classes.pageHeader} >
+          <div className={classes.container}>
+            <div className="btn btn-primary btn-xs {{name}}-edit-back-button edit-back-button"
+              onClick={this.onBack.bind(this)}
+            >
+              Back
+            </div>
+            <{{class_name}}Form {{name}}={this.state}
+              onSubmit={this.onSubmit.bind(this)}
+              onChange={this.onChange.bind(this)}/>
+          </div>
+          <Footer whiteFont/>
         </div>
-        <{{class_name}}Form {{name}}={this.state}
-          onSubmit={this.onSubmit.bind(this)}
-          onChange={this.onChange.bind(this)}/>
       </div>
     )
   }
 }
 
-{{class_name}}Edit.proptypes = {
+{{class_name}}EditComponent.proptypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }
+
+export const {{class_name}}Edit = withStyles(moduleStyle, { withTheme: true })({{class_name}}EditComponent)

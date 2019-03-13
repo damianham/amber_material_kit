@@ -42,7 +42,7 @@ class LoginPage extends React.Component {
   render() {
     const { classes, ...rest } = this.props;
     return (
-      <div>
+      <div style={ { width: '100%' } }>
         <div
           className={classes.pageHeader}
           style={{
