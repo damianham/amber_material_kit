@@ -22,6 +22,10 @@ significant ways;
   This behaviour is easily modifiable in src/assets/javascripts/app.js and also by adding paths to PUBLIC_PATHS
   in src/pipes/authenticate.cr and/or src/pipes/authenticateJWT.cr .
 
+To see what an application created with this recipe will look like visit the online 
+[demo](https://ambermaterialkit.herokuapp.com/#/).  This is just the starting point but the recipe includes
+enough building blocks to help create an awesome web application.
+
 Enjoy!
 
 ## Prerequisites
