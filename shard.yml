@@ -1,11 +1,11 @@
 name: amber_material_kit
-version: 1.0.2
+version: 1.0.3
 
 authors:
    - Damian Hamill <damianham@gmail.com>
 
 description: |
-   Application recipe for a React SPA with Material UI
+   Application recipe for a React SPA with Material UI Kit
 
 license: MIT
 
