@@ -37,7 +37,7 @@ it.skip("renders the {{class_name}}Form", () => {
 it("selecting new {{field.name}} fires onChange event", () => {
   const {{field.name | pluralize}} = [{id:1, name: 'Widget'}, {id: 2, name: 'Gasket'}];
   const {{name}} = {id:1, {{field.name}}_id: '1'};
-  store.getState()["{{field.name}}"] = {{field.name | pluralize}}
+  store.getState()['{{field.name}}'] = {{field.name | pluralize}}
 
   const onChange = jest.fn()
 

@@ -7,11 +7,11 @@ import { withTheme } from '@material-ui/core/styles'
 import withStyles from '@material-ui/core/styles/withStyles'
 import Footer from 'components/Footer/Footer.jsx'
 
-import moduleStyle from "assets/jss/moduleStyle.jsx"
+import moduleStyle from 'assets/jss/moduleStyle.jsx'
 
-import {EventBus} from '../../../lib/js/eventBus'
-import {bestTitleForClass} from '../../../lib/js/utils'
-import {store} from '../../../lib/js/store'
+import { EventBus } from '../../../lib/js/eventBus'
+import { bestTitleForClass } from '../../../lib/js/utils'
+import { store } from '../../../lib/js/store'
 
 import { {{class_name}} } from './{{name}}'
 
@@ -22,16 +22,16 @@ class {{class_name}}ViewComponent extends React.Component {
     this.state = this.props.location.state || {}
   }
 
-  onBack() {
+  onBack () {
     this.props.history.goBack()
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const vm = this
 
     if (typeof this.state.{{name}} === 'undefined') {
       // load the resource for the param ID
-      this.state.{{name}} = store.find( '{{name}}', this.props.match.params.id)
+      this.state.{{name}} = store.find('{{name}}', this.props.match.params.id)
     }
 
     {% for field in visible_fields -%}
@@ -39,7 +39,7 @@ class {{class_name}}ViewComponent extends React.Component {
     {% if field.name != "user" %}
     if (this.state.{{name}} && typeof this.state.{{field.name}} === 'undefined') {
       // load the resource for the param ID
-      this.state.{{field.name}} = store.find( '{{field.name}}', this.state.{{name}}.{{field.name}}_id)
+      this.state.{{field.name}} = store.find('{{field.name}}', this.state.{{name}}.{{field.name}}_id)
     }
     {% endif -%}
     {% endif -%}
@@ -52,16 +52,16 @@ class {{class_name}}ViewComponent extends React.Component {
     // if (this.state.{{name}} && typeof this.state.comments === 'undefined') {
 
     // this requires the related objects to already be loaded in the store
-    // develoeprs can ensure that with e.g.
+    // developers can ensure that with e.g.
     // store.loadResources('comment', '/comments', (data) => { /* data is an array of Resource */})
 
     /*
     if (this.state.{{name}} && typeof this.state.related === 'undefined') {
-      let related = store.related('related', '{{name}}_id', this.state.{{name}}.id);
+      let related = store.related('related', '{{name}}_id', this.state.{{name}}.id)
 
       if (typeof related.catch === 'function') {
         related.catch((error, statusText) => {
-          store.handleErrors("Show", "related", statusText, error);
+          store.handleErrors('Show', 'related', statusText, error)
         })
       } else {
         // we got an array of records with matching {{name}}_id
@@ -70,18 +70,19 @@ class {{class_name}}ViewComponent extends React.Component {
     }
     */
 
-    // An alternative is to use Resource.query() which makes a request to the backend
+    // An alternative is to use Resource.query() which returns an array of
+    // related objects
     /*
       import Resource from '../../../lib/js/resource'
-      let res = new Resource('/comments');
+      let res = new Resource('/comments')
 
-      res.query({field: "{{name}}_id", value: 1}).then((response) => {
-        if (response.data) {
-          vm.setState({ comments: response.data})
+      res.query({ field: '{{name}}_id', value: this.state.{{name}}.id }).then((response) => {
+        if (response) {
+          vm.setState({ comments: response})
         }
       }).catch((error, statusText) => {
-        console.log('store load resources failed with', error);
-        store.handleErrors('Query', 'comment', statusText, error);
+        console.log('store load resources failed with', error)
+        store.handleErrors('Query', 'comment', statusText, error)
       })
     */
   }
@@ -94,7 +95,7 @@ class {{class_name}}ViewComponent extends React.Component {
     {% for field in visible_fields -%}
     {% if field.type == "reference" -%}
     {% if field.name != "user" %}
-    const {{field.name}} = this.state.{{field.name}} || {};
+    const {{field.name}} = this.state.{{field.name}} || {}
     {% endif -%}
     {% endif -%}
     {% endfor %}

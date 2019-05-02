@@ -196,7 +196,7 @@ class {{class_name}}IndexListComponent extends React.Component {
   ]).isRequired
 }
 
-export const {{class_name}}IndexList =  withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexListComponent)
+export const {{class_name}}IndexList = withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexListComponent)
 
 class {{class_name}}IndexItemComponent extends React.Component {
   delete (id, event) {
@@ -300,4 +300,4 @@ class {{class_name}}IndexItemComponent extends React.Component {
   ]).isRequired
 }
 
-export const {{class_name}}IndexItem =  withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexItemComponent)
+export const {{class_name}}IndexItem = withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexItemComponent)
