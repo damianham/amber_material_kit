@@ -51,8 +51,13 @@ class {{class_name}}Form extends React.Component {
         {% if field.name != "user" %}
           <div className='form-group'>
             <label htmlFor='{{name}}-{{field.name}}-form-data' id='{{name}}-{{field.name}}'>{{field.name | capitalize}}
-              <span className='form-data-error' id='{{name}}-{{field.name}}-form-error'
-                role='{{name}}-{{field.name}}-form-error' />
+            {% if field.type == "reference" -%}
+              <span className='form-data-error' id='{{name}}-{{field.name}}_id-form-error'
+                role='{{name}}-{{field.name}}_id-form-error' />
+            {% else -%}
+            <span className='form-data-error' id='{{name}}-{{field.name}}-form-error'
+              role='{{name}}-{{field.name}}-form-error' />
+            {%- endif %}
             </label>
             {% if field.type == "text" -%}
             <textarea
