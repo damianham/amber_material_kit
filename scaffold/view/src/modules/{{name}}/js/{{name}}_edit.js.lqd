@@ -34,8 +34,8 @@ class {{class_name}}EditComponent extends React.Component {
 
     store.update('{{name}}', this.state.id, this.state)
       .then(this.onBack.bind(this))
-      .catch((error, statusText) => {
-        store.handleErrors('Update', '{{name}}', statusText, error)
+      .catch((response, statusText, error) => {
+        store.handleErrors('Update', '{{name}}', error, response.responseJSON)
       })
   }
 

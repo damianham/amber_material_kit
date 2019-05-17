@@ -44,8 +44,8 @@ class {{class_name}}NewComponent extends React.Component {
     event.preventDefault();
     let {{name}} = new {{class_name}}(this.state)
     {{name}}.save().then(this.onBack.bind(this))
-    .catch((error, statusText) => {
-      store.handleErrors('Add', '{{name}}', statusText, error)
+    .catch((response, statusText, error) => {
+      store.handleErrors('Add', '{{name}}', error, response.responseJSON)
     });
   }
 
