@@ -7,7 +7,7 @@ export * from './{{name}}_new'
 export * from './{{name}}_view'
 
 export class {{class_name}} extends Resource {
-  constructor ( attributes) {
+  constructor (attributes) {
     super('/{{name | pluralize}}', attributes)
   }
 
