@@ -36,6 +36,12 @@ import HeaderLinks from 'components/Header/HeaderLinks.jsx'
 import Auth from '../../lib/js/auth'
 import routes from '../../modules/js/routes'
 
+import Components from 'views/Components/Components.jsx'
+import LandingPage from 'views/LandingPage/LandingPage.jsx'
+import ProfilePage from 'views/ProfilePage/ProfilePage.jsx'
+import LoginPage from 'views/LoginPage/LoginPage.jsx'
+import RegisterPage from 'views/RegisterPage/RegisterPage.jsx'
+
 const dashboardRoutes = []
 
 // define a mapping from a text name used as the icon ID in routes in
@@ -115,6 +121,43 @@ const styles = (theme) => ({
     padding: theme.spacing.unit * 3
   }
 })
+
+const static_routes = [ {
+  path: '/components',
+  exact: true,
+  type: 'index',
+  name: 'Components',
+  main: Components,
+  icon: 'View'
+}, {
+  path: '/landing-page',
+  exact: true,
+  type: 'index',
+  name: 'Landing Example',
+  main: LandingPage,
+  icon: 'Info'
+}, {
+  path: '/profile-page',
+  exact: true,
+  type: 'index',
+  name: 'Profile Example',
+  main: ProfilePage,
+  icon: 'Face'
+}, {
+  path: '/login-page',
+  exact: true,
+  type: 'index',
+  name: 'Login',
+  main: LoginPage,
+  icon: 'Login'
+}, {
+  path: '/signup',
+  exact: true,
+  type: 'index',
+  name: 'Signup',
+  main: RegisterPage,
+  icon: 'Signup'
+}]
 
 class ListItemLink extends React.Component {
   constructor (props, state) {
@@ -335,14 +378,7 @@ class App extends React.Component {
             { this.isAuthenticated() ? (
               <ListItemLink exact key='/profile-page' to='/profile-page' primary='Profile' icon={<PersonIcon />} />
             ) : (
-              <li>
-                <a href='/signup'>
-                  <ListItem button >
-                    <ListItemIcon>{<PersonAddIcon />}</ListItemIcon>
-                    <ListItemText primary="Sign Up" />
-                  </ListItem>
-                </a>
-              </li>
+              <ListItemLink exact key='/register-page' to='/signup' primary='Register' icon={<PersonAddIcon />} />
             )
             }
           </List>
@@ -357,6 +393,15 @@ class App extends React.Component {
               component={route.main}
             />
           ))}
+          {static_routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              component={route.main}
+            />
+          ))
+          }
         </Switch>
       </div>
     )

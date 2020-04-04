@@ -44,6 +44,27 @@ class HomeController < ApplicationController
     end
   end
 
+  def signin
+{{"      "}}{% if model == "granite" -%}
+      user = User.find_by(email: params["email"])
+{% else -%}
+      user = Repo.get_by(User, email: params["email"])
+{% endif -%}
+{{"    "}}end
+
+    if user && user.authenticate(params["password"].to_s)
+      session[:user_id] = user.id
+
+      token = JWT.encode({id: user.id, email: user.email}, Amber.settings.secret_key_base, JWT::Algorithm::HS256)
+      {user: user_hash, token: token, csrf: csrf_token}.to_json
+    else
+      error = {error: "invalid email and/or password"}
+      respond_with 400 do
+        json error.to_json
+      end
+    end
+  end
+
   def authenticate_jwt
     if params["token"]
       payload, header = JWT.decode(params["token"], Amber.settings.secret_key_base, JWT::Algorithm::HS256)

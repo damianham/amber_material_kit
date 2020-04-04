@@ -28,22 +28,4 @@ routes.push({
   icon: 'Info'
 })
 
-routes.push({
-  path: '/profile-page',
-  exact: true,
-  type: 'index',
-  name: 'Profile Example',
-  main: ProfilePage,
-  icon: 'Face'
-})
-
-routes.push({
-  path: '/login-page',
-  exact: true,
-  type: 'index',
-  name: 'Login Example',
-  main: LoginPage,
-  icon: 'Login'
-})
-
 // append routes

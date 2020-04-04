@@ -19,12 +19,12 @@ class Store {
   }
 
   loadResources (klazz, endpoint, done) {
-    this.state[klazz] = []
     const vm = this
 
     new Resource(endpoint).all().then((resp) => {
-      if (resp.data) {
-        resp.data.forEach((entry) => {
+      if (resp) {
+        vm.state[klazz] = []
+        resp.forEach((entry) => {
           vm.state[klazz].push(new Resource(endpoint, entry))
         })
         done(vm.state[klazz])
@@ -39,6 +39,8 @@ class Store {
     const msgs = response.replace('Validation failed. [', '').split('Amber::Validators::Error')
     msgs.shift()
 
+    // console.log('handle errors', response.replace('Validation failed. [', ''), msgs)
+
     const re = /@message=.(Field [a-zA-Z0-9 _]+)/
     msgs.forEach((msg) => {
       msg.replace(re, (match, msg) => {
@@ -51,6 +53,7 @@ class Store {
   handleErrors (action, klazz, statusText, response) {
     // response is possibly a jquery jqXHR
     // which has responseJSON
+
     if (response.error && typeof response.error === 'string' && response.error.startsWith('Validation')) {
       window.toastr.error(`${action} ${klazz} ${statusText} - Validation failed`)
       return this.validationErrors(action, klazz, response.error)

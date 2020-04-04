@@ -1,5 +1,5 @@
 Amber::Server.configure do |app|
-  pipeline :web, :auth do
+  pipeline :web do
     # Plug is the method to use connect a pipe (middleware)
     # A plug accepts an instance of HTTP::Handler
     # plug Amber::Pipe::PoweredByAmber.new
@@ -23,6 +23,8 @@ Amber::Server.configure do |app|
     plug Amber::Pipe::Logger.new
     plug Amber::Pipe::Session.new
     plug Amber::Pipe::CORS.new
+    # enable this pipe for JWT support
+    # plug AuthenticateJWT.new
   end
 
   # All static content will run these transformations
@@ -33,15 +35,16 @@ Amber::Server.configure do |app|
   end
 
   routes :web do
-    get "/authenticateWithToken", HomeController, :authenticate_jwt
-    get "/me", HomeController, :me
-    websocket "/model", ModelSocket
-    websocket "/signal", SignalSocket
     get "/", HomeController, :index
-    post "/", HomeController, :token_sign_in_helper
   end
 
   routes :api do
+    get "/authenticateWithToken", HomeController, :authenticate_jwt
+    post "/api/auth/signin", HomeController, :signin
+    get "/me", HomeController, :me 
+    post "/", HomeController, :token_sign_in_helper
+    websocket "/model", ModelSocket
+    websocket "/signal", SignalSocket
   end
 
   routes :static do

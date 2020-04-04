@@ -20,20 +20,23 @@ import CustomInput from 'components/CustomInput/CustomInput.jsx'
 
 import loginPageStyle from 'assets/jss/material-kit-react/views/loginPage.jsx'
 
+import image from 'assets/img/bg7.jpg'
+
 import { EventBus } from '../../../../lib/js/eventBus'
 import Auth from '../../../../lib/js/auth'
 import { short, validEmail } from '../../../../lib/js/utils'
 
-import image from 'assets/img/bg7.jpg'
-
-class LoginPage extends React.Component {
+class RegisterPage extends React.Component {
   constructor (props) {
     super(props)
     // we use this to make the card to appear after the page has been rendered
     this.state = {
       cardAnimaton: 'cardHidden',
+      firstname: '',
+      lastname: '',
       email: '',
       password: '',
+      confirm_password: '',
       invalid: {},
       message: ''
     }
@@ -47,21 +50,46 @@ class LoginPage extends React.Component {
     this.setState({ password: event.target.value })
   }
 
-  signin (event) {
+  onChangeConfirmPassword (event) {
+    this.setState({ confirm_password: event.target.value })
+  }
+
+  onChangeFirstname (event) {
+    this.setState({ firstname: event.target.value })
+  }
+
+  onChangeLastname (event) {
+    this.setState({ lastname: event.target.value })
+  }
+
+  signup (event) {
     const $ = window.$
+
+    event.preventDefault()
 
     const invalid = {}
     let message
 
-    event.preventDefault()
-
+    if (short(this.state.firstname, 2)) {
+      invalid.firstname = true
+      message = 'First Name is too short'
+    }
+    if (short(this.state.lastname, 2)) {
+      invalid.lastname = true
+      message = message || 'Last Name is too short'
+    }
     if (!validEmail(this.state.email)) {
       invalid.email = true
-      message = 'Email does not appear to be valid'
+      message = message || 'Email does not appear to be valid'
     }
     if (short(this.state.password, 8)) {
       invalid.password = true
       message = message || 'Password is too short'
+    }
+
+    if (this.state.confirm_password !== this.state.password) {
+      invalid.confirm = true
+      message = message || 'Passwords do not match'
     }
 
     if (Object.keys(invalid).length > 0) {
@@ -71,54 +99,30 @@ class LoginPage extends React.Component {
       this.setState({ invalid: {}, message: '' })
     }
 
+    // console.log('signup started', this.state)
+
     $.ajax({
-      url: '/api/auth/signin',
+      url: '/api/smartboat/register',
       method: 'POST',
       dataType: 'json',
-      data: { email: this.state.email, password: this.state.password }
+      data: {
+        firstname: this.state.firstname,
+        lastname: this.state.lastname,
+        email: this.state.email,
+        password: this.state.password,
+        _csrf: window.csrf_token
+      }
     }
     ).then((response) => {
+      // console.log('signup response', response.token, response.user)
       Auth.authenticateUser(response.token, response.user)
       EventBus.emit('user authenticated', response.user)
       window.location = '/#/'
     }
-    ).catch(() => {
-      window.toastr.error('email and/or password is invalid - please try again')
+    ).catch((error) => {
+      console.log('signup error', error, this.state)
+      window.location = '/#/'
     })
-  }
-
-  getSocialButtons (classes) {
-    return (
-      <div className={classes.socialLine}>
-        <Button
-          justIcon
-          href="https://twitter.com"
-          target="_blank"
-          color="transparent"
-          onClick={e => e.preventDefault()}
-        >
-          <i className={'fab fa-twitter'} />
-        </Button>
-        <Button
-          justIcon
-          href="https://facebook.com"
-          target="_blank"
-          color="transparent"
-          onClick={e => e.preventDefault()}
-        >
-          <i className={'fab fa-facebook'} />
-        </Button>
-        <Button
-          justIcon
-          href="https://google.com"
-          target="_blank"
-          color="transparent"
-          onClick={e => e.preventDefault()}
-        >
-          <i className={'fab fa-google-plus-g'} />
-        </Button>
-      </div>
-    )
   }
 
   componentDidMount () {
@@ -147,15 +151,48 @@ class LoginPage extends React.Component {
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={4}>
                 <Card className={classes[this.state.cardAnimaton]}>
-                  <form className={classes.form} onSubmit={this.signin.bind(this)}>
-                    <input type="hidden" name="_csrf" value={window.csrf_token} />
+                  <form className={classes.form} onSubmit={this.signup.bind(this)}>
                     <CardHeader color="primary" className={classes.cardHeader}>
-                      <h4>Login</h4>
-
+                      <h4>Register</h4>
                     </CardHeader>
-                    <p className={classes.divider}>Enter your email address and password</p>
-                    <CardBody>
 
+                    <CardBody>
+                      <CustomInput
+                        labelText="First Name..."
+                        id="first"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        error={this.state.invalid.firstname || false}
+                        inputProps={{
+                          type: 'text',
+                          value: this.state.firstname,
+                          onChange: this.onChangeFirstname.bind(this),
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <People className={classes.inputIconsColor} />
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+                      <CustomInput
+                        labelText="Last Name..."
+                        id="last"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        error={this.state.invalid.lastname || false}
+                        inputProps={{
+                          type: 'text',
+                          value: this.state.lastname,
+                          onChange: this.onChangeLastname.bind(this),
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <People className={classes.inputIconsColor} />
+                            </InputAdornment>
+                          )
+                        }}
+                      />
                       <CustomInput
                         labelText="Email..."
                         id="email"
@@ -196,6 +233,27 @@ class LoginPage extends React.Component {
                           )
                         }}
                       />
+                      <CustomInput
+                        labelText="Confirm Password"
+                        id="confirm"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        error={this.state.invalid.confirm || false}
+                        inputProps={{
+                          type: 'password',
+                          name: 'password',
+                          value: this.state.confirm_password,
+                          onChange: this.onChangeConfirmPassword.bind(this),
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <Icon className={classes.inputIconsColor}>
+                                lock_outline
+                              </Icon>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
                       <div>
                         <p>
                           {this.state.message}
@@ -203,9 +261,10 @@ class LoginPage extends React.Component {
                       </div>
                     </CardBody>
                     <CardFooter className={classes.cardFooter}>
-                      <div onClick={this.signin.bind(this)}>
+
+                      <div onClick={this.signup.bind(this)}>
                         <Button color="primary" size="lg">
-                          Sign In
+                          Get started
                         </Button>
                       </div>
                     </CardFooter>
@@ -221,4 +280,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default withStyles(loginPageStyle)(LoginPage)
+export default withStyles(loginPageStyle)(RegisterPage)

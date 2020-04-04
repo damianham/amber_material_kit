@@ -38,4 +38,4 @@ watch:
     build_commands:
       - echo watching assets
     run_commands:
-      - yarn watch
+      - npm run watch
