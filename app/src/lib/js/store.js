@@ -71,7 +71,7 @@ class Store {
     }
   }
 
-  subscribe (klazz, endpoint, done) {
+  subscribe (klazz, endpoint, done, userID) {
     const vm = this
 
     if (this.streams[klazz]) {
@@ -82,7 +82,7 @@ class Store {
     this.state[klazz] = []
 
     // create a ResourceStream and subscribe to events
-    const stream = new ResourceStream(klazz, endpoint)
+    const stream = new ResourceStream(klazz, endpoint, userID)
 
     this.streams[klazz] = {
       stream: stream,
@@ -160,9 +160,12 @@ class Store {
         Object.assign(oldModel, model)
 
         return oldModel.save()
+      } else {
+        console.log('no model for', klazz, model.id)
       }
     }
     const msg = this.isLoaded(klazz) ? `Could not find record :${id}` : `Records for ${klazz} are not loaded`
+    console.log(msg)
     return new Promise(function (resolve, reject) {
       reject(Error(`Could not update ID:${id} ${msg}`))
     })

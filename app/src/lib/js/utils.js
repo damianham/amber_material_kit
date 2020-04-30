@@ -19,8 +19,11 @@ export const getRandomInt = function (max) {
   return Math.floor(Math.random() * Math.floor(max))
 }
 
-export const bestTitleForClass = function (item) {
-  return item.title || item.name || item.username || item.email || item.id
+export const bestTitleForClass = function (item, field) {
+  if (field) {
+    return item[field]
+  }
+  return item.title || item.name || item.username || item.email || item.code || item.id
 }
 
 export const titleForId = function (store, id, klazz) {
@@ -29,10 +32,10 @@ export const titleForId = function (store, id, klazz) {
   return item ? bestTitleForClass(item) : id
 }
 
-export const optionsForClass = function (store, klazz) {
+export const optionsForClass = function (store, klazz, field) {
   if (typeof store.getState()[klazz] === 'undefined') return []
   return store.getState()[klazz].map((item) => {
-    return { value: item.id, label: bestTitleForClass(item) }
+    return { value: item.id, label: bestTitleForClass(item, field) }
   })
 }
 

@@ -45,9 +45,10 @@ const eventEmitter = require('event-emitter')
 
 */
 class ResourceStream {
-  constructor (modelName, endpoint) {
+  constructor (modelName, endpoint, userID) {
     this.model_name = modelName
     this.endpoint = endpoint
+    this.userID = userID
     this.resource = new Resource(endpoint)
     this.models = {}
 
@@ -64,7 +65,7 @@ class ResourceStream {
     vm.socket.connect() // returns a promise
       .then(() => {
         // console.log('connecting to model stream for', model_name);
-        const channel = vm.socket.channel(vm.model_name)
+        const channel = vm.socket.channel(vm.model_name + (vm.userID !== null ? `:${vm.userID}` : ''))
         channel.join()
 
         channel.on('update', (message) => {
@@ -84,6 +85,7 @@ class ResourceStream {
           // console.log('delete model message', message)
           vm.emit('delete:model', message)
         })
+        channel.push('model subscriber', `{message: 'model monitoring for boat ${vm.userID}'}`)
       })
   }
 
