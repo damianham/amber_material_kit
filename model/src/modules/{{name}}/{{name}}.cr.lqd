@@ -2,10 +2,6 @@ class {{class_name}} < Granite::Base
   connection {{database}}
   table {{table_name}}
 
-  after_create :on_created
-  after_update :on_updated
-  after_destroy :on_deleted
-
 {% for field in fields -%}
 {% if field.type == "reference" -%}
 {{"  "}}belongs_to :{{field.name}}
@@ -15,7 +11,7 @@ class {{class_name}} < Granite::Base
 {% for field in fields -%}
 {% if field.type != "reference" -%}
 {% if field.hidden == false -%}
-{{"  "}}column {{field.name}} : {{field.cr_type}}
+{{"  "}}column {{field.name}} : {{field.cr_type}}?
 {% endif -%}
 {% endif -%}
 {% endfor -%}
@@ -23,15 +19,4 @@ class {{class_name}} < Granite::Base
 {{"  "}}timestamps
 {% endif %}
 
-  def on_created
-    Sockets::Model.send_model("{{name}}", "new", self.to_json)
-  end
-
-  def on_updated
-    Sockets::Model.send_model("{{name}}", "update", self.to_json)
-  end
-
-  def on_deleted
-    Sockets::Model.send_model("{{name}}", "delete", { :id => self.id }.to_json )
-  end
 end

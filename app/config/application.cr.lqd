@@ -24,5 +24,3 @@ require "./routes"
 require "amber_render_module"
 require "../src/modules/**"
 
-require "../src/channels/*"
-require "../src/sockets/*"
