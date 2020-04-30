@@ -50,11 +50,11 @@ class HomeController < ApplicationController
 {% else -%}
       user = Repo.get_by(User, email: params["email"])
 {% endif -%}
-{{"    "}}end
+{{"    "}}
 
     if user && user.authenticate(params["password"].to_s)
       session[:user_id] = user.id
-
+      user_hash = {id: user.id, email: user.email}
       token = JWT.encode({id: user.id, email: user.email}, Amber.settings.secret_key_base, JWT::Algorithm::HS256)
       {user: user_hash, token: token, csrf: csrf_token}.to_json
     else
