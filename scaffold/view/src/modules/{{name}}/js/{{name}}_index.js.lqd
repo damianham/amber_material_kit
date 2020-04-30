@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { withTheme } from '@material-ui/core/styles'
 import withStyles from '@material-ui/core/styles/withStyles'
-import Footer from 'components/Footer/Footer.jsx'
+import Button from "components/CustomButtons/Button.jsx"
 
 import moduleStyle from "assets/jss/moduleStyle.jsx"
 
@@ -32,6 +32,8 @@ class {{class_name}}IndexComponent extends React.Component {
   }
 
   sort (event) {
+    if (!store.isLoaded('{{name}}')) return
+
     if (event && typeof event === 'string') {
       // we were given the column to sort on as a string
       if (this.state.sort_column === event) {
@@ -63,16 +65,22 @@ class {{class_name}}IndexComponent extends React.Component {
     })
 
     this.setState({ list: sorted })
+    // hide the spinner
+    window.$('.loading-spinner').hide()
   }
 
-  componentWillMount () {
+  componentDidMount () {
     let vm = this
 
-    store.subscribe('{{name}}', '/{{name | pluralize}}', (data) => {
-      if (data) {
-        vm.sort()
-      }
-    })
+    if (store.isLoaded('{{name}}')) {
+      vm.sort()
+    } else {
+      store.loadResources('{{name}}', '/{{name | pluralize}}', (data) => {
+        if (data) {
+          vm.sort()
+        }
+      })
+    }    
 
     EventBus.on('new:model:{{name}}', this.newListener = (model) => {
       vm.sort()
@@ -90,12 +98,12 @@ class {{class_name}}IndexComponent extends React.Component {
       store.delete('{{name}}', id)
     })
 
-    // subscribe to related data
+    // load related data
 {% for field in visible_fields -%}
   {% if field.type == "reference" -%}
   {% if field.name != "user" -%}
 {{" "}}
-    store.subscribe('{{field.name}}', '/{{field.name | pluralize}}', (data) => {
+    store.loadResources('{{field.name}}', '/{{field.name | pluralize}}', (data) => {
       if (data) {
         // trigger a re-render
         vm.sort()
@@ -125,15 +133,25 @@ class {{class_name}}IndexComponent extends React.Component {
               </div>
               <div className="col-sm-1">
                 <div className="{{name}}-index-new-button index-new-button btn btn-secondary btn-xs">
-                  <Link style={classes.button} to="/{{name | pluralize}}/new">New</Link>
+                  <Link style={classes.button} to="/{{name | pluralize}}/new">
+                    <Button color="primary" round>
+                      New
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
             <div className={classNames(classes.main, classes.mainRaised)}>
+                            
+              <div className="loading-spinner">
+                <div className="smt-spinner-circle">
+                  <div className="smt-spinner"></div>
+                </div>
+              </div>
+
               <{{class_name}}IndexList {{name | pluralize}}={this.state.list} delegate={this}/>
             </div>
           </div>
-          <Footer whiteFont/>
         </div>
       </div>
     )
@@ -198,6 +216,122 @@ class {{class_name}}IndexListComponent extends React.Component {
 
 export const {{class_name}}IndexList = withStyles(moduleStyle, { withTheme: true })({{class_name}}IndexListComponent)
 
+class {{class_name}}TableComponent extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      list: this.props.{{ name }},
+      sort_column: 'id',
+      sort_direction: 'up'
+    }
+    this.toggleSort = this.toggleSort.bind(this)
+  }
+
+  toggleSort (event) {
+    this.sort(event)
+  }
+
+  sort (event) {
+    if (event && typeof event === 'string') {
+      // we were given the column to sort on as a string
+      if (this.state.sort_column === event) {
+        this.state.sort_direction = this.state.sort_direction === 'up' ? 'down' : 'up'
+      }
+      this.state.sort_column = event
+    } else if (event && event.target) {
+      // the sort column to sort on is the result of a click
+      if (this.state.sort_column === event.target.dataset.field) {
+        this.state.sort_direction = this.state.sort_direction === 'up' ? 'down' : 'up'
+      }
+      this.state.sort_column = event.target.dataset.field
+    }
+
+    let vm = this
+
+    let sorted = this.state.list.sort((a, b) => {
+      let aVal = a[vm.state.sort_column]
+      let bVal = b[vm.state.sort_column]
+
+      if (aVal === bVal) {
+        return 0
+      }
+      if (aVal < bVal) {
+        return vm.state.sort_direction === 'up' ? -1 : 1
+      } else {
+        return vm.state.sort_direction === 'up' ? 1 : -1
+      }
+    })
+
+    this.setState({ list: sorted })
+    // hide the spinner
+    window.$('.loading-spinner').hide()
+  }
+
+  componentDidMount () {
+    let vm = this
+
+    // load related data
+{% for field in visible_fields -%}
+  {% if field.type == "reference" -%}
+  {% if field.name != "user" -%}
+{{" "}}
+    store.loadResources('{{field.name}}', '/{{field.name | pluralize}}', (data) => {
+      if (data) {
+        // trigger a re-render
+        vm.sort()
+      }
+    })
+  {% endif -%}
+  {% endif -%}
+{% endfor %}
+  }
+
+  render () {
+    const { classes, ...rest } = this.props
+    return (
+      <div style={ { width: '100%' } }>
+        <div className={classes.pageHeader} >
+          <div className={classes.container}>
+            <div className="row {{name}}-Table-title-row Table-title-row">
+              <div className="col-sm-11">
+                <h2 className="{{name}}-Table-title Table-title">{{display_name | pluralize}}</h2>
+              </div>
+              <div className="col-sm-1">
+                <div className="{{name}}-Table-new-button Table-new-button btn btn-secondary btn-xs">
+                  <Link style={classes.button} to="/{{name | pluralize}}/new">
+                    <Button color="primary" round>
+                      New
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <div className={classNames(classes.main, classes.mainRaised)}>
+                            
+              <div className="loading-spinner">
+                <div className="smt-spinner-circle">
+                  <div className="smt-spinner"></div>
+                </div>
+              </div>
+
+              <{{class_name}}IndexList {{name | pluralize}}={this.state.list} delegate={this}/>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+{{class_name}}TableComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  {{name}}: PropTypes.object.isRequired,
+}
+
+export const {{class_name}}IndexTable = withStyles(moduleStyle, { withTheme: true })({{class_name}}TableComponent)
+
 class {{class_name}}IndexItemComponent extends React.Component {
   delete (id, event) {
     event.preventDefault()
@@ -214,7 +348,7 @@ class {{class_name}}IndexItemComponent extends React.Component {
 {% for field in visible_fields -%}
 {% if field.type == "reference" -%}
 {% if field.name != "user" -%}
-{{"    "}}const {{field.name}} = store.find('{{field.name}}', {{name}}.{{field.name}}_id)
+{{"    "}}const {{field.name}} = store.find('{{field.name}}', {{name}}.{{field.name}}_id) || {}
 {% endif -%}
 {% endif -%}
 {% endfor -%}
@@ -233,7 +367,7 @@ class {{class_name}}IndexItemComponent extends React.Component {
               }
             }
           }>
-            { bestTitleForClass({{field.name}} || { id: {{name}}.{{field.name}}_id }) }
+            { bestTitleForClass({{field.name}} || { id: {{name}}.{{field.name}}_id } /*, 'fieldname' */) }
           </Link>
         </td>
         {% else -%}

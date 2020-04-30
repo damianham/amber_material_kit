@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { withTheme } from '@material-ui/core/styles'
 import withStyles from '@material-ui/core/styles/withStyles'
-import Footer from 'components/Footer/Footer.jsx'
 
 import moduleStyle from "assets/jss/moduleStyle.jsx"
 
@@ -54,7 +53,6 @@ class {{class_name}}EditComponent extends React.Component {
               onSubmit={this.onSubmit.bind(this)}
               onChange={this.onChange.bind(this)}/>
           </div>
-          <Footer whiteFont/>
         </div>
       </div>
     )

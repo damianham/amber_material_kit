@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 
 import { withTheme } from '@material-ui/core/styles'
 import withStyles from '@material-ui/core/styles/withStyles'
-import Footer from 'components/Footer/Footer.jsx'
 
 import moduleStyle from 'assets/jss/moduleStyle.jsx'
 
@@ -26,26 +25,8 @@ class {{class_name}}ViewComponent extends React.Component {
     this.props.history.goBack()
   }
 
-  componentWillMount () {
-    const vm = this
-
-    if (typeof this.state.{{name}} === 'undefined') {
-      // load the resource for the param ID
-      this.state.{{name}} = store.find('{{name}}', this.props.match.params.id)
-    }
-
-    {% for field in visible_fields -%}
-    {% if field.type == "reference" -%}
-    {% if field.name != "user" %}
-    if (this.state.{{name}} && typeof this.state.{{field.name}} === 'undefined') {
-      // load the resource for the param ID
-      this.state.{{field.name}} = store.find('{{field.name}}', this.state.{{name}}.{{field.name}}_id)
-    }
-    {% endif -%}
-    {% endif -%}
-    {% endfor -%}
-
-    // this is included to help developers load related objects for a model
+  loadRelated ({{ name }}) {
+// this is included to help developers load related objects for a model
     // the recipe generator cannot know which models belong to {{name}}
     // rename 'related' to the model name and uncomment the sections
     // e.g. for 'comments' that belong to this {{name}}
@@ -74,17 +55,44 @@ class {{class_name}}ViewComponent extends React.Component {
     // related objects
     /*
       import Resource from '../../../lib/js/resource'
-      let res = new Resource('/comments')
+      let res = new Resource('/related')
 
       res.query({ field: '{{name}}_id', value: this.state.{{name}}.id }).then((response) => {
         if (response) {
-          vm.setState({ comments: response})
+          vm.setState({ related: response})
         }
       }).catch((response, statusText, error) => {
         console.log('store load resources failed with', error)
-        store.handleErrors('Query', 'comment', error || response.message, response.responseJSON)
+        store.handleErrors('Query', 'related', error || response.message, response.responseJSON)
       })
     */
+  }
+
+  componentWillMount () {
+    const vm = this
+
+    if (typeof this.state.{{name}} === 'undefined') {
+      // load the resource for the param ID
+      let {{name}} = store.find('{{name}}', parseInt(this.props.match.params.id) )
+      this.loadRelated({{name}})
+      this.setState({ {{name}}: {{name}} })
+    } else {
+      this.loadRelated(this.state.{{name}})
+    }
+
+    {% for field in visible_fields -%}
+    {% if field.type == "reference" -%}
+    {% if field.name != "user" %}
+    if (this.state.{{name}} && typeof this.state.{{field.name}} === 'undefined') {
+      // load the resource for the param ID
+      let {{field.name}} = store.find('{{field.name}}', this.state.{{name}}.{{field.name}}_id)
+      this.setState({ {{name}}: {{name}} })
+    }
+    {% endif -%}
+    {% endif -%}
+    {% endfor -%}
+
+    
   }
 
   render () {
@@ -173,7 +181,6 @@ class {{class_name}}ViewComponent extends React.Component {
               }
             </div>
           </div>
-          <Footer whiteFont/>
         </div>
       </div>
     )

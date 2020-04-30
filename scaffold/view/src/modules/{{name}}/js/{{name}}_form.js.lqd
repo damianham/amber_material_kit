@@ -1,13 +1,18 @@
 /* eslint-disable no-trailing-spaces */
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { withTheme } from '@material-ui/core/styles'
+import withStyles from '@material-ui/core/styles/withStyles'
 
-import { optionsForClass } from '../../../lib/js/utils'
+import moduleStyle from 'assets/jss/moduleStyle.jsx'
+
+import { optionsForClass, bestTitleForClass } from '../../../lib/js/utils'
 import { EventBus } from '../../../lib/js/eventBus'
 import { store } from '../../../lib/js/store'
 import $ from 'jquery'
 
-class {{class_name}}Form extends React.Component {
+class {{class_name}}FormComponent extends React.Component {
   componentWillMount () {
     EventBus.on('validation:failed:{{name}}', this.updateListener = (msg) => {
       // get the field name and highlight the field, format of the msg is
@@ -151,8 +156,8 @@ class {{class_name}}Form extends React.Component {
   }
 }
 
-{{class_name}}Form.proptypes = {
+{{class_name}}FormComponent.proptypes = {
   {{name}}: PropTypes.object.isRequired
 }
 
-export default {{class_name}}Form
+export default {{class_name}}Form = withStyles(moduleStyle, { withTheme: true })({{class_name}}FormComponent)
